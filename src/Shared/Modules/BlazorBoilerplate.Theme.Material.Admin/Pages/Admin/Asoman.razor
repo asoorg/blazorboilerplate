@@ -1,9 +1,7 @@
-﻿@page "/"
-@inject IStringLocalizer<Global> L
-@inject ISnackbar Snackbar
-@inject HttpClient Http
-@inject IAuthorizationService AuthorizationService
+﻿@page "/asoman"
+
 @using BlazorBoilerplate.Shared.Dto.Sample
+@inject IMatToaster matToaster
 @using System.Diagnostics
 @attribute [Authorize]
 @inject NavigationManager navigationManager
@@ -15,8 +13,7 @@
 @if (asoStart == true)
 {
     <div style="display:flex;justify-content:center; align-content:center; height: 100px;  ">
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="asoStartFirst">Start</MudButton>
-
+        <MatButton Style="font-size: xx-large; vertical-align: central; background-color:lightseagreen; width: 120px; height: 80px" tabindex="0" id="s0" OnClick="asoStartFirst">Start/شروع</MatButton>
     </div>
     <div style="display:flex;justify-content:center; align-content:center; height: 300px;  ">
         <h1 style="align-content:center;">در این تحقیق هر بار یک چهره ظاهر می شود که ممکن است هیجانی یا خنثی باشد که شما با آن کاری ندارید ولی در زیر آن چشمی را که سریعتر چشمک می زند بعد از تشخیص سریع انتخاب کنید</h1>
@@ -149,6 +146,7 @@
     public string ArrowLeft { get; set; }
     public string ArrowRight { get; set; }
 
+    public MessageDto messageDto { get; set; } = new MessageDto();
 
     string AsoRT = "0";
     double AsoRTcounter = 0.0;
@@ -188,7 +186,7 @@
     {
         downImage0B = "";
         asoFix = "Please Wait...";
-        //messageDto.Text = "";
+        messageDto.Text = "";
 
         value1 = "Asoman2";
 
@@ -236,7 +234,7 @@
         {
             var result = await apiClient.GetLogs();
             dbLogItems = new List<DbLog>(result);
-            ////matToaster.Add(L["One item found", Plural.From("{0} items found", (int)result.InlineCount)], MatToastType.Success, L["Operation Successful"]);
+            //matToaster.Add(L["One item found", Plural.From("{0} items found", (int)result.InlineCount)], MatToastType.Success, L["Operation Successful"]);
 
             //await Task.Delay(5000);
 
@@ -244,7 +242,7 @@
         }
         catch (Exception ex)
         {
-            //matToaster.Add(ex.GetBaseException().Message, MatToastType.Danger, L["Operation Failed"]);
+            matToaster.Add(ex.GetBaseException().Message, MatToastType.Danger, L["Operation Failed"]);
         }
 
         await Task.Delay(5000);
@@ -258,12 +256,12 @@
             //if ()
             //var resultLogo = await apiClient.GetLogos();
             //dbLogoItems = new List<DbLogo>(resultLogo);
-            ////matToaster.Add(L["One item found", Plural.From("{0} items found", (int)result.InlineCount)], MatToastType.Success, L["Operation Successful"]);
+            //matToaster.Add(L["One item found", Plural.From("{0} items found", (int)result.InlineCount)], MatToastType.Success, L["Operation Successful"]);
 
         }
         catch (Exception ex)
         {
-            //matToaster.Add(ex.GetBaseException().Message, MatToastType.Danger, L["Operation Failed"]);
+            matToaster.Add(ex.GetBaseException().Message, MatToastType.Danger, L["Operation Failed"]);
         }
     }
 
@@ -300,51 +298,63 @@
         await Task.Delay(1000);
 
         // if (asoTmpImg.Split("/")[4] == "BlackCircle.jpg")
-        asoLooLoo = 10;
+        asoLooLoo = 0;
 
         //if (asoTmpImg.Split("/")[4] == "LeftUnlike.jpg")
+
         UnlikeImageLeft = dbLogItems[asoLooLoo].Message;
-        UnlikeImageRight = dbLogItems[asoLooLoo-1].Message;
-        
-        LikeImageLeft = dbLogItems[asoLooLoo-2].Message;
-        LikeImageRight = dbLogItems[asoLooLoo-3].Message;
-        
 
+        asoLooLoo++;
 
-                fixImage = dbLogItems[asoLooLoo-4].Message;
+        // if (asoTmpImg.Split("/")[4] == "FixHand.jpg")
+
+        fixImage = dbLogItems[asoLooLoo].Message;
+
+        //if (asoTmpImg.Split("/")[4] == "RightLike.jpg")
+
+        LikeImageRight = dbLogItems[asoLooLoo+1].Message;
+
+        //if (asoTmpImg.Split("/")[4] == "RightUnlike.jpg")
+
+        UnlikeImageRight = dbLogItems[asoLooLoo+2].Message;
 
         // if (asoTmpImg.Split("/")[4] == "LeftLike.jpg")
 
+        LikeImageLeft = dbLogItems[asoLooLoo+3].Message;
+        asoLooLoo++;
 
         // if (asoTmpImg.Split("/")[4] == "Left1.jpg")
 
-        
+        leftImage1 = dbLogItems[asoLooLoo].Message;
+
+        //if (asoTmpImg.Split("/")[4] == "Right1.jpg")
+
+        rightImage1 = dbLogItems[asoLooLoo+1].Message; ;
+
         //if (asoTmpImg.Split("/")[4] == "Right2Left.jpg")
 
-        
-
-        leftImage0 = dbLogItems[asoLooLoo-5].Message;
-        //downImage1B = asoTmp1;
-
-        rightImage0 = dbLogItems[asoLooLoo-6].Message;
-        
-        leftImage1 = dbLogItems[asoLooLoo-7].Message;
-
-        rightImage1 = dbLogItems[asoLooLoo-8].Message; ;
-
-        ArrowLeft = dbLogItems[asoLooLoo-9].Message;
+        ArrowLeft = dbLogItems[asoLooLoo+2].Message;
 
         // if (asoTmpImg.Split("/")[4] == "Left2Right.jpg")
 
-        ArrowRight = dbLogItems[asoLooLoo-10].Message;
+        ArrowRight = dbLogItems[asoLooLoo+3].Message;
 
-        //targetImageLeft1 = dbLogItems[asoLooLoo-9].Message;
+        asoLooLoo++;
+
+        targetImageLeft1 = dbLogItems[asoLooLoo].Message;
         // if (asoTmpImg.Split("/")[4] == "WhiteCircle.jpg")
 
-        //targetImageRight1 = dbLogItems[asoLooLoo-10].Message; ;
+        targetImageRight1 = dbLogItems[asoLooLoo+1].Message; 
         //downIm
+        //if (asoTmpImg.Split("/")[4] == "Left0.jpg")
 
-        asoLoop = asoLooLoo+1;
+        leftImage0 = dbLogItems[asoLooLoo+2].Message;
+        //downImage1B = asoTmp1;
+
+        // if (asoTmpImg.Split("/")[4] == "Right0.jpg")
+
+        rightImage0 = dbLogItems[asoLooLoo+3].Message;
+        asoLoop = asoLooLoo + 1;
         await Task.Delay(5000);
         asoFix = "";
         await PlayAgain();
@@ -368,17 +378,13 @@
         {
             //angry
             downImage0 = dbLogItems[asoLoop].Message;//message.Message1;
-            asoLooLoo++;
-            asoLoop++;
-            //downImage0B = dbLogItems[asoLoop].Level;//.Split("*")[1];
+                                                      //downImage0B = dbLogItems[asoLoop].Level;//.Split("*")[1];
         }
 
         else
         {
-            asoLooLoo++;
-            asoLoop++;
             //neutral
-            downImage0 = dbLogItems[asoLoop].Message;//message.Message1;
+            downImage0 = dbLogItems[asoLoop+1].Message;//message.Message1;
                                                       //downImage0B = dbLogItems[asoLoop].Level;//.Split("*")[1];
         }
 
@@ -524,7 +530,7 @@
             }
             catch (Exception ex)
             {
-                //matToaster.Add(ex.GetBaseException().Message, MatToastType.Danger, "Operation Failed");
+                matToaster.Add(ex.GetBaseException().Message, MatToastType.Danger, "Operation Failed");
             }
             todo = new Todo();
 
@@ -550,7 +556,7 @@
             catch (Exception ex)
 
             {
-                //matToaster.Add(ex.GetBaseException().Message, MatToastType.Danger, "Error");
+                matToaster.Add(ex.GetBaseException().Message, MatToastType.Danger, "Error");
             }
 
             createUserDialogOpen = true;

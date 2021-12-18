@@ -281,17 +281,17 @@ namespace BlazorBoilerplate.Server
                 // pass the resulting certificate to Identity Server
                 if (cert != null)
                 {
-                    identityServerBuilder.AddSigningCredential(cert);
-                    Log.Logger.Information($"Added certificate {cert.Subject} to Identity Server");
+                    // identityServerBuilder.AddSigningCredential(cert);
+                    //Log.Logger.Information($"Added certificate {cert.Subject} to Identity Server");
                 }
                 else if (OperatingSystem.IsWindows())
                 {
-                    Log.Logger.Debug("Trying to use WebHosting Certificate for Identity Server");
-                    identityServerBuilder.AddWebHostingCertificate();
+                    // Log.Logger.Debug("Trying to use WebHosting Certificate for Identity Server");
+                    //identityServerBuilder.AddWebHostingCertificate();
                 }
                 else
                 {
-                    throw new Exception("Missing Certificate for Identity Server");
+                   // throw new Exception("Missing Certificate for Identity Server");
                 }
             }
 

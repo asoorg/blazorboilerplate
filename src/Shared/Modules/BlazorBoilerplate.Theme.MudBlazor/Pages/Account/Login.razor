@@ -33,8 +33,9 @@
                         <MudCardContent>
                             <FluentValidationValidator />
                             <ValidationSummary />
+                                        <label>Username=User0001</label>
                             <MudTextField AutoFocus="true" @bind-Value="@loginViewModel.UserName" Label=@L["UserName"] AdornmentIcon="@Icons.Material.Filled.Person" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError=@L["Required"]></MudTextField>
-
+                                        <label>Password=User1234</label>
                             <MudTextField @bind-Value="@loginViewModel.Password" Label=@L["Password"] AdornmentIcon="@Icons.Material.Outlined.Lock" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError=@L["Required"] InputType="InputType.Password"></MudTextField>
 
                             @if (loginViewModel.AllowRememberLogin)

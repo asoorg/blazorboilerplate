@@ -3,13 +3,13 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <Title>BlazorBoilerplate Server</Title>
+    <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
     <PublishWithAspNetCoreTargetManifest>false</PublishWithAspNetCoreTargetManifest>
     <DockerfileFile>$(SolutionDir)/Utils/Docker/Dockerfile</DockerfileFile>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerComposeProjectPath>$(SolutionDir)/Utils/Docker/docker-compose.dcproj</DockerComposeProjectPath>
     <UserSecretsId>dccf98cd-91ea-4e92-b852-ad056fc2b6bf</UserSecretsId>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="logs\**" />
     <Content Remove="logs\**" />
@@ -98,6 +98,7 @@
 
   <ItemGroup>
     <Folder Include="Themes\" />
+    <Folder Include="_content\BlazorBoilerplate.Theme.Material\images\" />
   </ItemGroup>   
   <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(BuildingInsideVisualStudio)' == 'true'">
     <Exec Command="if exist &quot;$(ProjectDir)Logs\*.*&quot; del &quot;$(ProjectDir)Logs\*.*&quot; /q" />

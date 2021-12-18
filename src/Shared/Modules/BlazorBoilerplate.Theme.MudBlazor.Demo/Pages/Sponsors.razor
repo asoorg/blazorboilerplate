@@ -1,44 +1,600 @@
 ﻿@page "/sponsors"
+@inject IStringLocalizer<Global> L
+@attribute [Authorize(Policies.IsAdmin)]
+@using System.IO
+@inject IApiClient apiClient
+@using System.Linq.Expressions
+@inject IViewNotifier viewNotifier
 
-<PageTitle>Sponsors / Financial Donations - Greatly Appeciated!</PageTitle>
-<ul>
-    <li>Ganesh M. - July 25, 2019</li>
-    <li>Eugene M. - Sept 27, 2019</li>
-    <li><a href="https://www.responsiveedge.com/" target="_blank">Responsive Edge, LLC</a> | Brian G. - Oct 14, 2019</li>
-    <li>Daniel W. - Oct. 27, 2019</li>
-    <li>Zachary  P. - Dec. 3, 2019</li>
-    <li>Stephen  H. - Feb. 11, 2020</li>
-    <li>Stephen  H. - Mar. 11, 2020</li>
-</ul>
-<p>
-    <DonateButton />&nbsp; - Help support this repo / code and hosting costs. Other devs are charging $30+ to download their code with similar functionality.
-</p>
-<hr />
-<h2>Code Contributors</h2>
-<ul>
-    <li>Keith Fimreite / Enkode - <a href="https://github.com/enkodellc" target="_blank">https://github.com/enkodellc</a> | <a href="http://keithfimreite.com" target="_blank">http://keithfimreite.com</a></li>
-    <li>Daniel Bunting - <a href="https://github.com/DanielBunting" target="_blank">https://github.com/DanielBunting</a></li>
-    <li>Maciej Targoński - <a href="https://github.com/acid12" target="_blank">https://github.com/acid12</a></li>
-    <li>responsive-edge - <a href="https://www.responsiveedge.com/" target="_blank">Responsive Edge, LLC</a></li>
-    <li>Mark Stega - <a href="https://github.com/markstega" target="_blank">https://github.com/markstega</a></li>
-    <li>NPadrutt - <a href="https://github.com/NPadrutt" target="_blank">https://github.com/NPadrutt</a> | <a href="https://www.apply-solutions.com/en/" target="_blank">Apply Solutions</a></li>
-    <li>npraskins - <a href="https://github.com/npraskins" target="_blank">https://github.com/npraskins</a></li>
-    <li>Anthony Pearson - <a href="https://github.com/ajgoldenwings" target="_blank">https://github.com/ajgoldenwings</a> | <a href="http://www.anthonyjamespearson.com/" target="_blank">http://www.anthonyjamespearson.com/</a>  </li>
-    <li>Chris Sainty - <a href="https://github.com/chrissainty" target="_blank">https://github.com/chrissainty</a> | <a href="https://chrissainty.com" target="_blank">https://chrissainty.com</a></li>
-    <li>Marcos Alves - <a href="https://github.com/marcoscavaleiro" target="_blank">https://github.com/marcoscavaleiro</a></li>
-    <li>Hans M - <a href="https://github.com/SeppPenner" target="_blank">https://github.com/SeppPenner</a> | <a href="https://franzhuber23.blogspot.de/" target="_blank">https://franzhuber23.blogspot.de/</a></li>
-    <li>Mobin - <a href="https://github.com/mobinseven" target="_blank">https://github.com/mobinseven</a></li>
-    <li>Dennis - <a href="https://github.com/oneparameter" target="_blank">https://github.com/oneparameter</a></li>
-    <li>Clubber Lang - <a href="https://github.com/vd3d" target="_blank">https://github.com/vd3d</a></li>
-    <li>Reese King - <a href="https://github.com/kingmercian" target="_blank">https://github.com/kingmercian</a></li>
-    <li>John Barrett - <a href="https://github.com/274188A" target="_blank">https://github.com/274188A</a></li>
-    <li>marcotana - <a href="https://github.com/marcotana" target="_blank">https://github.com/marcotana</a> </li>
-    <li>Soomon - <a href="https://github.com/soomon" target="_blank">https://github.com/soomon</a> </li>
-    <li>Giovanni Quarella - <a href="https://github.com/GioviQ" target="_blank">https://github.com/GioviQ</a> | <a href="https://www.quarella.net/" target="_blank">https://www.quarella.net/</a> </li>
-    <li>Noah Praskins - <a href="https://github.com/np-at" target="_blank">https://github.com/np-at</a> </li>
-    <li>Kyle - <a href="https://github.com/np-at" target="_blank">https://github.com/Kronos11</a> </li>
-    <li>Stephen M - <a href="https://github.com/np-at" target="_blank">https://github.com/justSteve</a> </li>
-</ul>
-<p>
-    <MudButton Link="https://github.com/enkodellc/blazorboilerplate"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;  Github Repository / Contribute</MudButton> - Contribute to this repo to help it grow!
-</p>
+<PageTitle>aso!</PageTitle>
+
+
+<MudFab Icon="@Icons.Filled.ExposurePlus1" @onclick="@asoFileToBase64">asoAdd</MudFab>
+
+<MudText Typo="Typo.h6">MudBlazor is @asoFiles</MudText>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NewUpdateDb">asoNew</MudButton>
+
+<div>
+    @*accept="image/png,image/gif,image/jpeg" />
+        <div class="inputArea">
+               <InputFile id="inputDefault"
+                          OnChange="OnInputFileChange" />
+        </div>
+
+    *@
+    <div class="dropArea @dropClass" style="border-style:double; height:400px; width:600px">
+        Drag and drop your files here or click to open file loading dialogue...
+        <InputFile id="inputDrop"
+                   OnChange="OnInputFileChange"
+                   @ondragenter="HandleDragEnter"
+                   @ondragleave="HandleDragLeave"
+                   multiple />
+    </div>
+
+    @if (files != null && files.Count > 1)
+    {
+<div>
+    <ul>
+        @foreach (var file in files)
+        {
+<li>@file.Name</li>}
+    </ul>
+</div>}
+    @if (urls.Count > 0)
+    {
+        foreach (var url in urls)
+        {
+<br />
+                    <a href="@url" download>@url</a>}
+            }
+
+
+</div>
+
+@code {
+
+
+  public string Text { get; set; } = "????";
+  public string ButtonText { get; set; } = "Click Me";
+  public int ButtonClicked { get; set; }
+
+  void ButtonOnClick()
+  {
+      ButtonClicked += 1;
+      Text = $"Awesome x {ButtonClicked}";
+      ButtonText = "Click Me Again";
+  }
+}
+
+
+@code {
+    public int asoFiles { get; set; } = 32;
+
+    IReadOnlyList<IBrowserFile> files;
+    List<string> urls = new List<string>();//1
+    List<string> fileBase64 = new List<string>();//1
+
+    string dropClass = string.Empty;
+    const int maxFileSize = 10485760;
+
+    private void HandleDragEnter()
+    {
+        dropClass = "dropAreaDrug";
+    }
+
+    private void HandleDragLeave()
+    {
+        dropClass = string.Empty;
+    }
+
+    async Task asoFileToBase64()
+    {
+
+        if (1==2)
+        {
+            try
+            {
+                // asoGuideLogin = asoUser + "*" + value1 + "*" + (asoCBMsession).ToString() + "*" + urls[asoCBMsession];
+                //messageDto.When = DateTime.Now;
+                // await Send(messageDto);
+
+                dbLogItem.Id = asoCBMsessionAll;
+                //dbLogItem.Id1 = asoCBMsessionAll;
+                //dbLogItem.Id2 = asoCBMsession + 1;
+
+                //dbLogItem.Level = "asoGuideLogin";
+                dbLogItem.Message = "aso"; //fileBase64[i];
+                                           //dbLogItem.Message2 = fileBase64[i + 1];// + asoFiles / 4 * 1];
+                                           //dbLogItem.Message3 = fileBase64[i + 2];// + asoFiles / 4 * 2];
+                                           //dbLogItem.Message4 = fileBase64[i + 3];// + asoFiles / 4 * 3];
+
+                dbLogItem.TimeStamp = DateTime.Now;
+                dbLogItem.Exception = "asoUser";
+                dbLogItem.Properties = value1;
+
+                try
+                {
+                    //apiClient.AddEntity(todo);
+                    apiClient.AddEntity(dbLogItem);
+
+                    //dbLogItems
+                    await apiClient.SaveChanges();
+
+                    //await LoadMainEntities();
+                    // await LoadMainEntitiesDb();
+
+                }
+                catch (Exception ex)
+                {
+                    viewNotifier.Show(ex.Message, ViewNotifierType.Error, "Email Send 1");
+
+                    //matToaster.Add(ex.GetBaseException().Message, MatToastType.Danger, L["Operation Failed"]);
+                }
+                dbLogItem = new DbLog();
+
+                //todo = new Todo();
+                await LoadDataDb(DebugLevel);
+                await InvokeAsync(StateHasChanged);
+
+
+
+                //await InvokeAsync(StateHasChanged);
+                //messageDto.Text = "";
+            }
+            catch (Exception ex)
+            {
+                viewNotifier.Show(ex.Message, ViewNotifierType.Error, "Email Send 2");
+
+                // //matToaster.Add(ex.GetBaseException().Message, MatToastType.Danger, "Error");
+            }
+
+            viewNotifier.Show("aso", ViewNotifierType.Error, dbLogItems.Count().ToString());
+
+
+        }
+
+
+        //  asoCBMsession = 0;
+        //   asoCBMsessionAll = dbLogItems.Count() + 1;
+
+
+
+        if (1 == 1)
+        {
+            for (int i = 0; i < asoFiles; i++)
+            {
+             try
+                {
+                   // asoGuideLogin = asoUser + "*" + value1 + "*" + (asoCBMsession).ToString() + "*" + urls[asoCBMsession];
+                    //messageDto.When = DateTime.Now;
+                    // await Send(messageDto);
+
+                    dbLogItem.Id = asoCBMsessionAll;
+                    //dbLogItem.Id1 = asoCBMsessionAll;
+                    //dbLogItem.Id2 = asoCBMsession + 1;
+
+                    //dbLogItem.Level = "asoGuideLogin";
+                    dbLogItem.Message = fileBase64[i]; //fileBase64[i];
+                                                              //dbLogItem.Message2 = fileBase64[i + 1];// + asoFiles / 4 * 1];
+                                                              //dbLogItem.Message3 = fileBase64[i + 2];// + asoFiles / 4 * 2];
+                                                              //dbLogItem.Message4 = fileBase64[i + 3];// + asoFiles / 4 * 3];
+
+                    dbLogItem.TimeStamp = DateTime.Now;
+                    dbLogItem.Exception = "asoUser";
+                    dbLogItem.Properties = "value1";
+
+                    try
+                    {
+                        //apiClient.AddEntity(todo);
+                        apiClient.AddEntity(dbLogItem);
+
+                        //dbLogItems
+                        await apiClient.SaveChanges();
+
+                        //await LoadMainEntities();
+                        // await LoadMainEntitiesDb();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        viewNotifier.Show(ex.Message, ViewNotifierType.Error, "Email Send 1");
+
+                        //matToaster.Add(ex.GetBaseException().Message, MatToastType.Danger, L["Operation Failed"]);
+                    }
+                    dbLogItem = new DbLog();
+
+                    //todo = new Todo();
+                     await LoadDataDb(DebugLevel);
+                    await InvokeAsync(StateHasChanged);
+
+
+
+                    //await InvokeAsync(StateHasChanged);
+                    //messageDto.Text = "";
+                }
+                catch (Exception ex)
+                {
+                    viewNotifier.Show(ex.Message, ViewNotifierType.Error, "Email Send 2");
+
+                    // //matToaster.Add(ex.GetBaseException().Message, MatToastType.Danger, "Error");
+                }
+               
+                                viewNotifier.Show("aso", ViewNotifierType.Error, dbLogItems.Count().ToString());
+            }
+
+
+
+        }
+    }
+    async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        var UserInfo = await ((IdentityAuthenticationStateProvider)authStateProvider).GetUserViewModel();
+        if (UserInfo.IsAuthenticated)
+        {
+            asoUser = UserInfo.UserName.ToString();
+            await InvokeAsync(StateHasChanged);
+        }
+
+        dropClass = string.Empty;
+        try
+        {
+            if (e.FileCount > 1)
+            {
+                files = e.GetMultipleFiles(asoFiles);
+                urls.Clear();
+                urls.AddRange(await SaveFiles(files));
+                //fileBase64 = urls.ToArray().ToList();
+            }
+            else
+            {
+                files = null;
+
+                var url = await SaveFile(e.File);
+
+                urls.Clear();
+                urls.Add(url);
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine(ex.Message);
+            throw;
+        }
+    }
+    public int asoCBMsession { get; set; }
+    public int asoCBMsessionAll { get; set; }
+
+    public string value0 = "";
+
+    public string value1 = "";
+    public string value2 = "";
+    public string value3 = "";
+    public string value4 = "";
+
+    //public MessageDto messageDto { get; set; } = new MessageDto();
+
+    public string asoUser = "aso";
+    //ApplicationUser currentUser;
+    [Inject]
+    private AuthenticationStateProvider authStateProvider { get; set; }
+
+    Task<AuthenticationState> authenticationStateTask { get; set; }
+
+
+    private async Task<List<string>> SaveFiles(IReadOnlyList<IBrowserFile> files)
+    {
+        var list = new List<string>();
+        var guid = Guid.NewGuid().ToString();
+        ////////////////////asoCBMsessionAll = dbLogItems.Count() + 1;
+
+        foreach (var file in files)
+        {
+            var url = await SaveFile(file, guid);
+            list.Add(url);
+            fileBase64.Add(asoedit2);
+
+        }
+        return list;
+    }
+
+    public string asoedit2;
+
+
+    private async Task<string> SaveFile(IBrowserFile file, string guid = null)
+    {
+        if (guid == null)
+        {
+            guid = Guid.NewGuid().ToString();
+        }
+
+        var relativePath = Path.Combine("_content\\BlazorBoilerplate.Theme.Material\\images", guid);
+        var dirToSave = Path.Combine("", relativePath);
+        var di = new DirectoryInfo(dirToSave);
+        if (!di.Exists)
+        {
+            di.Create();
+        }
+
+        var filePath = Path.Combine(dirToSave, file.Name);
+        var url = Path.Combine(relativePath, file.Name).Replace("\\", "/");
+
+        using (var stream = file.OpenReadStream(maxFileSize))
+        {
+            using (var mstream = new MemoryStream())
+            {
+                await stream.CopyToAsync(mstream);
+                await File.WriteAllBytesAsync(filePath, mstream.ToArray());
+                asoedit2 = $"data:png;base64,{Convert.ToBase64String(mstream.ToArray())}";
+
+
+            }
+        }
+
+        return url;
+    } 
+}
+
+
+
+@code
+{ List<DbLog> dbLogItems;
+    string[] DebugLevels = { string.Empty, "Debug", "Information", "Warning", "Error" };
+    string DebugLevel = string.Empty;
+    private int pageSize { get; set; } = 150;
+    private int pageIndex { get; set; } = 0;
+    private int totalItemsCount { get; set; } = 10;
+    public DbLog dbLogItem { get; set; } = new DbLog();
+
+
+
+    protected async Task LoadDataDb(string debugLevel = "")
+    {
+        try
+        {
+            DebugLevel = debugLevel;
+            Expression<Func<DbLog, bool>> predicate = null;
+
+            if (debugLevel != string.Empty)
+                predicate = (i => i.Level == debugLevel);
+
+            var result = await apiClient.GetLogs(predicate, pageSize, pageIndex * pageSize);
+
+            dbLogItems = new List<DbLog>(result);
+            totalItemsCount = (int)result.InlineCount.Value;
+            //matToaster.Add(L["One item found", Plural.From("{0} items found", totalItemsCount)], MatToastType.Success, L["Operation Successful"]);
+        }
+        catch (Exception ex)
+        {
+            //matToaster.Add(ex.GetBaseException().Message, MatToastType.Danger, L["Operation Failed"]);
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    protected async Task LoadDataTodo(string debugLevel = "")
+    {
+        try
+        {
+            // DebugLevel = debugLevel;
+            // Expression<Func<DbLog, bool>> predicate = null;
+
+            // if (debugLevel != string.Empty)
+            //   predicate = (i => i.Level == debugLevel);
+
+            // var result = await apiClient.GetLogs(predicate, pageSize, pageIndex * pageSize);
+
+            // dbLogItems = new List<DbLog>(result);
+            totalItemsCount = todos.Count();//(int)result.InlineCount.Value;
+            //matToaster.Add(L["One item found", Plural.From("{0} items found", totalItemsCount)], MatToastType.Success, L["Operation Successful"]);
+        }
+        catch (Exception ex)
+        {
+            //matToaster.Add(ex.GetBaseException().Message, MatToastType.Danger, L["Operation Failed"]);
+        }
+
+        await InvokeAsync(StateHasChanged);
+    } }
+
+
+@code { private string newTodo;
+    private string _currentSelectedTask;
+    public string asoSelectRow;
+    bool deleteDialogOpenDb = false; }
+
+
+
+
+
+
+@code
+{ public string asoGuideLogin { get; set; }
+
+    bool deleteDialogOpen = false;
+    bool asoCheck5 = true;
+
+    bool dialogIsOpen = false;
+    bool dialogIsOpenDb = false;
+
+    List<Todo> todos = new List<Todo>();
+    public Todo todo { get; set; } = new Todo();
+
+    bool lazySnackbarIsOpen = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        //await LoadMainEntities();
+        await LoadMainEntitiesDb();
+
+        asoCheck5 = true;
+
+        //await base.OnInitializedAsync();
+
+       // await Task.Delay(TimeSpan.FromSeconds(3)).ContinueWith((_) =>
+        //{
+         //   this.lazySnackbarIsOpen = true;
+       // });
+
+    }
+    public void SelectionChangedEvent(object row)
+    {
+
+        try
+        {
+            //   if (row == null)
+            //  {
+            _currentSelectedTask = "aso0";
+            //  }
+            //  else
+            // {
+            if (row != null)
+            {
+                _currentSelectedTask = ((Todo)row).Id.ToString();//.Id.ToString();//"aso2";// string.Format("Task Nr. {0} has been selected", ((Todo)row).Id);
+                asoSelectRow = ((Todo)row).Title;//.ToString();//.Split("*")[1];//.Substring(0, 3);// == "cogsci")
+                //matToaster.Add(_currentSelectedTask, MatToastType.Success, asoSelectRow);
+
+            }
+
+            // foreach (var message22 in todos)
+            // {
+            ////matToaster.Add(_currentSelectedTask, MatToastType.Danger, asoSelectRow);
+        }
+        catch (Exception ex)
+        {
+            //matToaster.Add(ex.GetBaseException().Message, MatToastType.Danger, L["Operation Failed"]);
+        }
+        //   if (1 == 1)//message22.CreatedBy.Messages[0].Text.Split("*")[1].Substring(0, 3) == "cogsci")
+        //    {
+        // TestDataSort1.Add(new TestDataSort
+        // {
+        //     ItemOpt1 = message22.Id.ToString(),
+        //     ItemNo1 = message22.Title//.Split("*")[3],
+        //testid and itemCorrect, itemSubScale etc
+
+        //  });
+        //  }
+
+        //}
+
+        //}
+
+
+        this.StateHasChanged();
+    }
+
+
+
+    async Task LoadMainEntitiesDb()
+    {
+        try
+        {
+            var result = await apiClient.GetLogs();
+            dbLogItems = new List<DbLog>(result);
+            //matToaster.Add(L["One item found", Plural.From("{0} items found", (int)result.InlineCount)], MatToastType.Success, L["Operation Successful"]);
+            //if ()
+        }
+        catch (Exception ex)
+        {
+            //matToaster.Add(ex.GetBaseException().Message, MatToastType.Danger, L["Operation Failed"]);
+        }
+    }
+
+
+    public async Task NewUpdateDb()
+    {
+                            dbLogItem.Message = "aso"; //fileBase64[i];
+           
+        try
+                    {
+                        //apiClient.AddEntity(todo);
+                        apiClient.AddEntity(dbLogItem);
+
+                        //dbLogItems
+                        await apiClient.SaveChanges();
+
+                        //await LoadMainEntities();
+                       // await LoadMainEntitiesDb();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        //matToaster.Add(ex.GetBaseException().Message, MatToastType.Danger, L["Operation Failed"]);
+                    }
+                    dbLogItem = new DbLog();
+    }
+
+
+
+    public async Task DeleteDb()
+    {
+        try
+        {
+
+            apiClient.RemoveEntity(dbLogItem);
+            await apiClient.SaveChanges();
+            dbLogItems.Remove(dbLogItem);
+            // //matToaster.Add($"{dbLogItem.Level} deleted", MatToastType.Success, L["Operation Successful"]);
+
+
+        }
+        catch (Exception ex)
+        {
+            //matToaster.Add(ex.GetBaseException().Message, MatToastType.Danger, L["Operation Failed"]);
+        }
+
+        dbLogItem = new DbLog();
+
+        deleteDialogOpenDb = false;
+    }
+
+    public void OpenDialogDb()
+    {
+        dialogIsOpenDb = true;
+    }
+
+
+    public void OpenDeleteDialogDbLog(Int32 dbLogItemId)
+    {
+        dbLogItem = dbLogItems.Where(x => x.Id == dbLogItemId).SingleOrDefault();
+        deleteDialogOpenDb = true;
+    }
+    public async Task NewEntityDb()
+    {
+        dialogIsOpenDb = false;
+        // todo.Id = 1234567890;
+
+        // todo.Title = asoGuideLogin;
+        // todo.Title2 = asoUser;
+
+        // todo.IsCompleted = true;
+        // todo.IsDeleted = false;
+        //todo.IsStarted = true;
+        // dbLogItem.Id = 20;
+        dbLogItem.Level = "asoLevel1";
+        dbLogItem.Message = asoGuideLogin;
+        dbLogItem.TimeStamp = DateTime.Now;
+        dbLogItem.Exception = "asoException1";
+        //dbLogItem.Properties = "asoProperties1";
+
+        try
+        {
+            //apiClient.AddEntity(todo);
+            apiClient.AddEntity(dbLogItem);
+
+            //dbLogItems
+            await apiClient.SaveChanges();
+
+            //await LoadMainEntities();
+            await LoadMainEntitiesDb();
+
+        }
+        catch (Exception ex)
+        {
+            //matToaster.Add(ex.GetBaseException().Message, MatToastType.Danger, L["Operation Failed"]);
+        }
+        dbLogItem = new DbLog();
+
+        //todo = new Todo();
+        await LoadDataDb(DebugLevel);
+        await InvokeAsync(StateHasChanged);
+
+    } }

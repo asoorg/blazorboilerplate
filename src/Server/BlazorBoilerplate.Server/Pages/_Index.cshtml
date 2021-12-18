@@ -32,6 +32,7 @@
     <base href="~/" />
     <link href="manifest.json" rel="manifest" />
     <link href="_content/BlazorBoilerplate.Theme.Material/BlazorBoilerplate.Theme.Material.bundle.scp.css" rel="stylesheet">
+    <link rel="stylesheet" href="_content/Radzen.Blazor/css/default.css">
 </head>
 <body>
     @{
@@ -74,6 +75,7 @@
     <script src="js/interop.js"></script>
     <!-- https://docs.microsoft.com/en-us/aspnet/core/blazor/progressive-web-app -->
     <script>navigator.serviceWorker.register('service-worker.js');</script>
+    <script src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
 
     @if (mainConfiguration.Value.Runtime == Shared.Dto.Db.BlazorRuntime.Server)
     {
